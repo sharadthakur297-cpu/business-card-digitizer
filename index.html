@@ -93,14 +93,19 @@
     card.status='reading'; card.error=''; card.ocrDone=false; card.confirmed=false; updateCardUI(card);
     const ocrLine=article.querySelector('[data-role="ocrline"]'); ocrLine.innerHTML='<span class="spinner"></span> Reading text from this card…';
     try {
-      const images = await prepareImageVariants(card.ocrSource || card.file);
-      const engine = await getOcrEngine(() => { ocrLine.innerHTML='<span class="spinner"></span> Loading PaddleOCR and its browser models…'; });
       const result = await enqueueOcr(async () => {
+        // Keep image preparation inside the queue too. Preparing several large
+        // canvases at once can exhaust memory on phones and reload the tab.
+        const image = await prepareImageForOcr(card.ocrSource || card.file);
+        const engine = await getOcrEngine(() => { ocrLine.innerHTML='<span class="spinner"></span> Loading PaddleOCR and its browser models…'; });
         ocrLine.innerHTML='<span class="spinner"></span> Reading text with PaddleOCR…';
-        const readings=await engine.predict(images);
+        const readings=await engine.predict([image]);
         const attempts=readings.map(reading=>({data:{text:(reading.items||[]).map(item=>item.text||'').filter(Boolean).join('\n'),confidence:averageScore(reading.items)}}));
         attempts.sort((a,b)=>readingScore(b.data)-readingScore(a.data));
-        return {data:{text:mergeOcrReadings(attempts),confidence:attempts[0]?.data.confidence||0}};
+        const result={data:{text:mergeOcrReadings(attempts),confidence:attempts[0]?.data.confidence||0}};
+        // Release the canvas backing store promptly on memory-constrained phones.
+        image.width=1; image.height=1;
+        return result;
       });
       const text = result.data.text || '';
       card.ocrText = text;
@@ -130,7 +135,7 @@
           textRecognitionModelName:'PP-OCRv5_mobile_rec',
           textRecognitionModelAsset:{url:'https://huggingface.co/LunarOilRig/paddleocr-onnx/resolve/main/PP-OCRv5_mobile_rec_onnx_infer.tar'},
           worker:true,
-          ortOptions:{backend:'wasm',wasmPaths:'https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/',numThreads:2,simd:true}
+          ortOptions:{backend:'wasm',wasmPaths:'https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/',numThreads:1,simd:true}
         }))
         .catch(error => { paddleOcrPromise=null; throw new Error(`PaddleOCR could not load. Check your internet connection and retry. ${error.message||''}`); });
     }
@@ -158,9 +163,11 @@
     return result;
   }
 
-  async function prepareImageVariants(file) {
+  async function prepareImageForOcr(file) {
     const bitmap = await createImageBitmap(file);
-    const scale = Math.min(6, 2600 / Math.max(bitmap.width, bitmap.height));
+    // Business-card photos are often small. A modest upscale helps OCR, while
+    // the 1600px cap avoids the huge multi-canvas allocations that crash phones.
+    const scale = Math.min(2, 1600 / Math.max(bitmap.width, bitmap.height));
     const width = Math.max(1, Math.round(bitmap.width * scale));
     const height = Math.max(1, Math.round(bitmap.height * scale));
     const canvas = document.createElement('canvas');
@@ -168,17 +175,7 @@
     const context = canvas.getContext('2d', { willReadFrequently: true });
     context.drawImage(bitmap, 0, 0, width, height);
     bitmap.close();
-    const colorCanvas=document.createElement('canvas');colorCanvas.width=width;colorCanvas.height=height;colorCanvas.getContext('2d').drawImage(canvas,0,0);
-    const pixels = context.getImageData(0, 0, width, height), data = pixels.data;
-    for (let i = 0; i < data.length; i += 4) {
-      const gray = Math.max(0, Math.min(255, (data[i] * .299 + data[i+1] * .587 + data[i+2] * .114 - 128) * 1.4 + 128));
-      data[i] = data[i+1] = data[i+2] = gray;
-    }
-    context.putImageData(pixels, 0, 0);
-    const grayCanvas=document.createElement('canvas');grayCanvas.width=width;grayCanvas.height=height;grayCanvas.getContext('2d').drawImage(canvas,0,0);
-    for(let i=0;i<data.length;i+=4){const value=data[i]>168?255:0;data[i]=data[i+1]=data[i+2]=value}
-    context.putImageData(pixels,0,0);
-    return [colorCanvas,grayCanvas,canvas];
+    return canvas;
   }
 
   function averageScore(items){if(!items?.length)return 0;return items.reduce((sum,item)=>sum+(Number(item.score)||0),0)/items.length*100}
