@@ -1,307 +1,316 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#f7f8fc">
-  <title>Cardwise — Business Card Digitizer</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-  <style>
-    :root{--ink:#19233c;--muted:#74809a;--line:#e7eaf2;--paper:#fff;--bg:#f7f8fc;--purple:#6558d3;--pale:#f0efff;--green:#21845b;--greenbg:#eaf7f0;--amber:#a96111;--amberbg:#fff4e3;--shadow:0 10px 35px #2733540c}
-    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif}button,input{font:inherit}button{cursor:pointer}.topbar{height:72px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 max(24px,calc((100% - 1120px)/2))}.brand{display:flex;align-items:center;gap:10px;font:800 20px Manrope,sans-serif;letter-spacing:-.6px}.brand-mark{width:34px;height:34px;border-radius:11px;background:var(--purple);display:grid;place-items:center;color:#fff;font-size:17px}.topnote{font-size:13px;color:var(--muted)}main{max-width:1120px;padding:34px 24px 70px;margin:auto}.hero{display:flex;align-items:flex-end;justify-content:space-between;gap:22px;margin-bottom:26px}.eyebrow{text-transform:uppercase;color:var(--purple);font-size:11px;letter-spacing:1.5px;font-weight:700;margin:0 0 9px}.hero h1{font:800 clamp(26px,4vw,36px) Manrope,sans-serif;letter-spacing:-1.3px;margin:0 0 8px}.hero p{margin:0;color:var(--muted);font-size:15px;line-height:1.6}.privacy{white-space:nowrap;color:#64708a;font-size:12px;background:#fff;border:1px solid var(--line);padding:10px 13px;border-radius:10px}.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px}.step{display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:12px;background:#fff;border:1px solid var(--line);color:#7b8498;font-size:13px}.step b{width:25px;height:25px;border-radius:8px;background:#f1f2f7;display:grid;place-items:center;font-size:12px}.step.active{border-color:#d8d4ff;color:var(--purple);background:#fbfaff}.step.active b{background:var(--pale)}.upload{background:#fff;border:1px solid var(--line);border-radius:18px;padding:22px 24px;box-shadow:var(--shadow);display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:22px}.upload-copy{display:flex;align-items:center;gap:15px}.upload-icon{width:48px;height:48px;display:grid;place-items:center;background:var(--pale);border-radius:14px;color:var(--purple);font-size:22px}.upload h2{font:700 16px Manrope;margin:0 0 4px}.upload p{font-size:13px;color:var(--muted);margin:0}.actions{display:flex;gap:10px;flex-wrap:wrap}.btn{height:44px;border:1px solid var(--line);border-radius:10px;padding:0 16px;background:white;color:var(--ink);font-weight:700;font-size:13px;display:inline-flex;align-items:center;justify-content:center;gap:8px}.btn.primary{border-color:var(--purple);background:var(--purple);color:white}.btn:disabled{opacity:.45;cursor:not-allowed}.btn.small{height:35px;padding:0 12px;font-size:12px}.section-head{display:flex;align-items:center;justify-content:space-between;margin:26px 2px 12px}.section-head h2{font:700 17px Manrope;margin:0}.count{font-size:12px;color:var(--muted);margin-left:8px;font-weight:500}.cards{display:grid;gap:14px}.empty{background:#fff;border:1px dashed #d9deeb;border-radius:16px;text-align:center;padding:40px 20px;color:var(--muted)}.empty .symbol{font-size:26px;color:#a6adc0;margin-bottom:10px}.empty strong{display:block;color:var(--ink);font-size:14px;margin-bottom:5px}.card{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:var(--shadow)}.card-head{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid #eff1f6}.card-title{display:flex;align-items:center;gap:10px;min-width:0}.card-title strong{font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.badge{font-size:11px;font-weight:700;padding:5px 9px;border-radius:99px;white-space:nowrap}.badge.pending{color:var(--amber);background:var(--amberbg)}.badge.done{color:var(--green);background:var(--greenbg)}.badge.working{color:var(--purple);background:var(--pale)}.head-actions{display:flex;gap:8px}.icon-btn{border:0;background:transparent;color:#8b94a8;font-size:19px;width:32px;height:32px;border-radius:8px}.icon-btn:hover{background:#f4f5f9;color:#303a52}.card-body{padding:18px;display:grid;grid-template-columns:190px 1fr;gap:20px}.preview{width:100%;height:145px;background:#f2f3f8;border:1px solid var(--line);border-radius:11px;object-fit:contain}.preview-meta{font-size:11px;color:var(--muted);margin:8px 2px 0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ocr-line{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:12px;margin:0 0 13px}.spinner{width:13px;height:13px;border:2px solid #dcd9ff;border-top-color:var(--purple);border-radius:50%;animation:spin .75s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}.fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px 13px}.field label{display:block;font-size:11px;font-weight:700;color:#65708a;margin:0 0 5px}.field input{width:100%;height:39px;border:1px solid #e4e7ef;border-radius:8px;padding:0 10px;color:var(--ink);outline:none;font-size:13px}.field input:focus{border-color:#9c95ed;box-shadow:0 0 0 3px #6558d31a}.field.missing label{color:var(--amber)}.field.missing input{border-color:#f2d5a9;background:#fffaf2}.field input::placeholder{color:#b1b6c4}.field.full{grid-column:1/-1}.review-foot{display:flex;justify-content:space-between;align-items:center;gap:12px;padding-top:14px;margin-top:14px;border-top:1px solid #eff1f6}.hint{font-size:12px;color:var(--muted)}.hint.warn{color:var(--amber)}.confirm{min-width:145px}.exportbar{position:sticky;bottom:12px;background:#202944;color:white;box-shadow:0 12px 35px #20294435;border-radius:14px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:20px}.exportbar span{font-size:13px;color:#e0e4f0}.exportbar .btn{border:0;background:#fff;color:#283454}.exportbar .btn:disabled{background:#59627a;color:#d1d5df;opacity:1}.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:#202944;color:#fff;padding:12px 18px;border-radius:10px;box-shadow:var(--shadow);font-size:13px;z-index:5;max-width:calc(100% - 32px)}.toast.error{background:#9c3e3e}.hidden{display:none!important}.footnote{text-align:center;color:#9aa2b3;font-size:11px;margin-top:25px}
-    .rawtext{margin-top:12px;border:1px solid var(--line);border-radius:9px;padding:9px 11px}.rawtext summary{font-size:12px;color:#65708a;font-weight:700;cursor:pointer}.rawtext pre{white-space:pre-wrap;overflow-wrap:anywhere;max-height:150px;overflow:auto;background:#f8f9fc;border-radius:7px;padding:10px;font:12px/1.5 'DM Sans',sans-serif;color:#414b63}.crop-dialog{width:min(760px,calc(100% - 24px));border:0;border-radius:16px;padding:18px;box-shadow:0 20px 70px #17213c55}.crop-dialog::backdrop{background:#18223c99}.crop-dialog h2{font:700 18px Manrope;margin:0 0 6px}.crop-dialog p{font-size:13px;color:var(--muted);margin:0 0 13px}.cropstage{position:relative;display:inline-block;max-width:100%;line-height:0;touch-action:none;cursor:crosshair}.cropstage img{display:block;max-width:100%;max-height:65vh;object-fit:contain}.cropbox{position:absolute;border:2px solid #fff;box-shadow:0 0 0 9999px #1118;pointer-events:none}.crop-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:14px}
-    @media(max-width:680px){.topbar{height:62px;padding:0 18px}.topnote{display:none}main{padding:25px 15px 50px}.hero{display:block}.privacy{display:inline-block;margin-top:15px}.steps{gap:5px}.step{padding:9px 7px;gap:6px;font-size:10px;justify-content:center}.step b{width:22px;height:22px}.upload{padding:17px;display:block}.upload-copy{align-items:flex-start}.actions{margin-top:16px}.actions .btn{flex:1}.card-body{grid-template-columns:1fr;gap:14px;padding:14px}.preview-wrap{display:grid;grid-template-columns:120px 1fr;gap:10px;align-items:center}.preview{height:88px}.preview-meta{white-space:normal;line-height:1.4;overflow-wrap:anywhere}.fields{gap:10px}.field input{height:42px}.review-foot{align-items:flex-start;flex-direction:column}.confirm{width:100%}.exportbar{padding:12px}.exportbar span{font-size:12px}.exportbar .btn{padding:0 11px}.card-head{padding:12px 13px}}
-    @media(max-width:390px){.fields{grid-template-columns:1fr}.field.full{grid-column:auto}.step{font-size:9px}.actions .btn{padding:0 9px;font-size:12px}}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Business Card Digitizer</title>
+<style>
+  :root { --bg:#f5f6f8; --card:#fff; --ink:#1d2433; --muted:#667085; --brand:#2563eb; --ok:#16a34a; --warn:#f59e0b; --bad:#dc2626; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; background:var(--bg); color:var(--ink); line-height:1.4; }
+  header { background:var(--brand); color:#fff; padding:18px 16px; }
+  header h1 { margin:0; font-size:1.4rem; }
+  header p { margin:4px 0 0; opacity:.9; font-size:.95rem; }
+  main { max-width:760px; margin:0 auto; padding:16px; }
+  .btn { display:block; width:100%; min-height:56px; padding:14px; font-size:1.1rem; font-weight:600; border:0; border-radius:12px; background:var(--brand); color:#fff; cursor:pointer; text-align:center; }
+  .btn.alt { background:#fff; color:var(--brand); border:2px solid var(--brand); }
+  .btn.ok { background:var(--ok); }
+  .btn.small { min-height:44px; font-size:1rem; }
+  .btn:disabled { opacity:.5; cursor:not-allowed; }
+  .row { display:grid; gap:10px; grid-template-columns:1fr; margin-bottom:12px; }
+  @media (min-width:520px){ .row.two { grid-template-columns:1fr 1fr; } }
+  input[type=file] { display:none; }
+  .legend { display:flex; flex-wrap:wrap; gap:8px; font-size:.85rem; margin:8px 0 16px; }
+  .tag { padding:3px 10px; border-radius:99px; border:2px solid; background:#fff; }
+  .tag.u { border-color:var(--warn); } .tag.m { border-color:var(--bad); } .tag.g { border-color:var(--ok); }
+  #summary { font-weight:600; margin:8px 0; }
+  .card { background:var(--card); border-radius:14px; padding:14px; margin-bottom:16px; box-shadow:0 1px 4px rgba(0,0,0,.1); border:3px solid transparent; }
+  .card.confirmed { border-color:var(--ok); }
+  .card img { width:100%; max-height:220px; object-fit:contain; background:#eef0f4; border-radius:8px; }
+  .status { margin:10px 0; padding:10px; border-radius:8px; background:#eef2ff; font-size:.95rem; }
+  .status.failed { background:#fee2e2; color:#7f1d1d; }
+  .status.done { background:#dcfce7; color:#14532d; }
+  .field { margin:10px 0; padding:8px; border-radius:10px; border:2px solid #d0d5dd; }
+  .field.uncertain { border-color:var(--warn); background:#fffbeb; }
+  .field.missing { border-color:var(--bad); background:#fef2f2; }
+  .field label { display:flex; justify-content:space-between; font-weight:600; font-size:.9rem; margin-bottom:4px; }
+  .badge { font-weight:600; font-size:.8rem; }
+  .field.uncertain .badge { color:#b45309; } .field.missing .badge { color:var(--bad); }
+  .field input, .field textarea { width:100%; font-size:1.05rem; padding:12px; border:1px solid #cbd1da; border-radius:8px; font-family:inherit; }
+  details { margin:8px 0; font-size:.9rem; color:var(--muted); }
+  pre { white-space:pre-wrap; background:#f1f3f6; padding:8px; border-radius:6px; }
+  .actions { display:grid; gap:10px; grid-template-columns:2fr 1fr; margin-top:12px; }
+  .export { position:sticky; bottom:0; background:var(--bg); padding:12px 0; }
+</style>
 </head>
 <body>
-  <header class="topbar"><div class="brand"><span class="brand-mark">C</span>cardwise</div><div class="topnote">Simple contacts, ready to export</div></header>
-  <main>
-    <section class="hero"><div><p class="eyebrow">Business card digitizer</p><h1>Turn cards into contacts.</h1><p>Add a few business cards, review the details, then download them in one spreadsheet.</p></div><div class="privacy">🔒 Your images stay in this browser</div></section>
-    <div class="steps" aria-label="Workflow"><div class="step active" id="step1"><b>1</b> Add cards</div><div class="step" id="step2"><b>2</b> Read details</div><div class="step" id="step3"><b>3</b> Review & confirm</div><div class="step" id="step4"><b>4</b> Download Excel</div></div>
-    <div id="fileNotice" class="hidden" style="background:#fff4e3;border:1px solid #f2d5a9;color:#80500f;border-radius:12px;padding:14px 16px;margin:0 0 18px;font-size:13px;line-height:1.5"><strong>Open this page through localhost for OCR.</strong> Browsers restrict OCR model loading when this file is opened directly. In the project folder, run <code>python -m http.server 8000</code>, then open <code>http://localhost:8000/outputs/</code>.</div>
-    <section class="upload"><div class="upload-copy"><div class="upload-icon">▧</div><div><h2>Add business cards</h2><p>Choose several photos or take a picture. JPG, PNG, WEBP.</p></div></div><div class="actions"><button class="btn" id="cameraBtn" type="button">◎ Take a photo</button><button class="btn primary" id="galleryBtn" type="button">＋ Choose photos</button></div><input class="hidden" id="galleryInput" type="file" accept="image/*" multiple><input class="hidden" id="cameraInput" type="file" accept="image/*" capture="environment"></section>
-    <div class="section-head"><h2>Your cards <span class="count" id="cardCount">0</span></h2><button class="btn small" id="retryAllBtn" type="button" disabled>↻ Retry unread cards</button></div>
-    <section class="cards" id="cards"><div class="empty" id="empty"><div class="symbol">▤</div><strong>No cards added yet</strong>Pick one or more card photos to get started.</div></section>
-    <div class="exportbar"><span id="exportStatus">Confirmed contacts will appear in your spreadsheet.</span><button id="exportBtn" class="btn" disabled>↓ Download .xlsx</button></div>
-    <p class="footnote">OCR reads your image on this device. Please check every detail before exporting.</p>
-  </main>
-  <dialog id="cropDialog" class="crop-dialog"><h2>Crop around the business card</h2><p>Drag across the card itself, leaving out as much background as possible. Then retry OCR.</p><div id="cropStage" class="cropstage"><img id="cropImage" alt="Select the card area to crop"><div id="cropBox" class="cropbox hidden"></div></div><div class="crop-actions"><button id="cancelCrop" class="btn" type="button">Cancel</button><button id="applyCrop" class="btn primary" type="button" disabled>Crop & retry OCR</button></div></dialog>
-  <div id="toast" class="toast hidden" role="status"></div>
+<header>
+  <h1>📇 Business Card Digitizer</h1>
+  <p>Photo → text → check → Excel. Everything stays in your browser.</p>
+</header>
+
+<main>
+  <div class="row two">
+    <label class="btn" for="galleryInput">🖼️ Choose from gallery</label>
+    <label class="btn alt" for="cameraInput">📷 Take a photo</label>
+  </div>
+  <input type="file" id="galleryInput" accept="image/*" multiple>
+  <input type="file" id="cameraInput" accept="image/*" capture="environment">
+
+  <div class="legend">
+    <span class="tag g">Green = confirmed card</span>
+    <span class="tag u">Yellow = please check</span>
+    <span class="tag m">Red = missing</span>
+  </div>
+
+  <div id="summary"></div>
+  <div id="cards"></div>
+
+  <div class="export">
+    <button class="btn ok" id="exportBtn" disabled>⬇️ Download Excel (0 confirmed)</button>
+  </div>
+</main>
+
+<!-- Libraries (loaded from the internet) -->
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
 <script>
-(() => {
-  const FIELDS = [
-    ['name','Name'],['company','Company Name'],['title','Job Title'],['address','Address'],
-    ['email','Email'],['personalPhone','Personal Phone'],['companyPhone','Company Phone'],['website','Website']
-  ];
-  const cards = [];
-  const cardsEl = document.querySelector('#cards');
-  const galleryInput = document.querySelector('#galleryInput');
-  const cameraInput = document.querySelector('#cameraInput');
-  let toastTimer;
-  let paddleOcrPromise;
-  let workerBridgeInstalled=false;
-  let ocrQueue = Promise.resolve();
-  let cropTarget = null;
-  let cropStart = null;
-  let cropSelection = null;
-  if (location.protocol === 'file:') document.querySelector('#fileNotice').classList.remove('hidden');
+/* ============ 1. SETTINGS ============ */
+const FIELDS = [
+  ['name', 'Name'], ['company', 'Company Name'], ['title', 'Job Title'],
+  ['address', 'Address'], ['email', 'Email'],
+  ['personalPhone', 'Personal Phone'], ['companyPhone', 'Company Phone'],
+  ['website', 'Website']
+];
 
-  document.querySelector('#galleryBtn').addEventListener('click', () => galleryInput.click());
-  document.querySelector('#cameraBtn').addEventListener('click', () => cameraInput.click());
-  galleryInput.addEventListener('change', e => { addFiles(e.target.files); e.target.value=''; });
-  cameraInput.addEventListener('change', e => { addFiles(e.target.files); e.target.value=''; });
-  document.querySelector('#retryAllBtn').addEventListener('click', () => cards.filter(c => !c.ocrDone).forEach(runOcr));
-  document.querySelector('#exportBtn').addEventListener('click', exportExcel);
-  document.querySelector('#cancelCrop').addEventListener('click', () => document.querySelector('#cropDialog').close());
-  document.querySelector('#applyCrop').addEventListener('click', applyCrop);
-  document.querySelector('#cropStage').addEventListener('pointerdown', startCrop);
-  document.querySelector('#cropStage').addEventListener('pointermove', moveCrop);
-  document.querySelector('#cropStage').addEventListener('pointerup', endCrop);
-  document.querySelector('#cropStage').addEventListener('pointercancel', endCrop);
+/* ============ 2. STATE: one object per card ============ */
+const cards = [];   // each: {id, file, url, status, values, flags, raw, confirmed, el}
+let nextId = 1, worker = null, running = false;
 
-  function addFiles(fileList) {
-    const files = [...fileList].filter(file => file.type.startsWith('image/'));
-    if (!files.length) { toast('Choose an image file to continue.', true); return; }
-    for (const file of files) {
-      const card = { id: crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`, file, url: URL.createObjectURL(file), data: Object.fromEntries(FIELDS.map(([key])=>[key,''])), status:'reading', ocrDone:false, confirmed:false, error:'' };
-      cards.push(card);
-      renderCard(card);
-      runOcr(card);
+/* ============ 3. ADDING IMAGES ============ */
+document.getElementById('galleryInput').addEventListener('change', e => addFiles(e.target.files));
+document.getElementById('cameraInput').addEventListener('change', e => addFiles(e.target.files));
+
+function addFiles(fileList) {
+  for (const file of fileList) {
+    if (!file.type.startsWith('image/')) continue;
+    const c = { id: nextId++, file, url: URL.createObjectURL(file), status: 'queued',
+                values: {}, flags: {}, raw: '', confirmed: false, progress: 0, el: null };
+    FIELDS.forEach(([k]) => { c.values[k] = ''; c.flags[k] = 'missing'; });
+    cards.push(c);
+    const el = document.createElement('div');
+    c.el = el;
+    document.getElementById('cards').appendChild(el);
+    renderCard(c);
+  }
+  // reset inputs so the same photo can be picked again
+  document.getElementById('galleryInput').value = '';
+  document.getElementById('cameraInput').value = '';
+  updateSummary();
+  processQueue();
+}
+
+/* ============ 4. OCR (one card at a time; a failure never stops the others) ============ */
+async function getWorker() {
+  if (typeof Tesseract === 'undefined') throw new Error('OCR library did not load (are you online?)');
+  if (!worker) worker = await Tesseract.createWorker('eng', 1, {
+    logger: m => { if (current && m.status === 'recognizing text') { current.progress = Math.round(m.progress * 100); setStatusText(current); } }
+  });
+  return worker;
+}
+let current = null;
+
+async function processQueue() {
+  if (running) return;
+  running = true;
+  while (true) {
+    const c = cards.find(x => x.status === 'queued');
+    if (!c) break;
+    current = c;
+    c.status = 'reading'; renderCard(c);
+    try {
+      const w = await getWorker();
+      const img = await shrinkImage(c.file);
+      const { data } = await w.recognize(img);
+      c.raw = data.text || '';
+      if (c.raw.trim().length < 5) throw new Error('No readable text found in this image');
+      const result = extract(c.raw, data.confidence);
+      c.values = result.values; c.flags = result.flags;
+      c.status = 'done';
+    } catch (err) {
+      console.error(err);
+      c.status = 'failed'; c.error = err.message || String(err);
     }
+    renderCard(c);
     updateSummary();
   }
+  current = null; running = false;
+}
 
-  function renderCard(card) {
-    document.querySelector('#empty')?.remove();
-    const article = document.createElement('article'); article.className='card'; article.id=`card-${card.id}`;
-    const fieldsHTML = FIELDS.map(([key,label]) => `<div class="field" data-field="${key}"><label for="${card.id}-${key}">${label}</label><input id="${card.id}-${key}" name="${key}" type="text" autocomplete="off" placeholder="${label}" value="${escapeHTML(card.data[key])}"></div>`).join('');
-    article.innerHTML = `<div class="card-head"><div class="card-title"><strong title="${escapeHTML(card.file.name)}">${escapeHTML(card.file.name)}</strong><span class="badge working" data-role="badge">Reading…</span></div><div class="head-actions"><button class="btn small" data-action="crop" type="button">Crop & retry</button><button class="icon-btn" data-action="remove" title="Remove card" aria-label="Remove card">×</button></div></div><div class="card-body"><div class="preview-wrap"><img class="preview" src="${card.url}" alt="Preview of ${escapeHTML(card.file.name)}"><div class="preview-meta">${formatBytes(card.file.size)} · fields can be edited</div></div><div><p class="ocr-line" data-role="ocrline"><span class="spinner"></span> Reading text from this card…</p><details class="rawtext hidden" data-role="rawtext"><summary>See text found by OCR</summary><pre data-role="raw"></pre></details><div class="fields">${fieldsHTML}</div><div class="review-foot"><span class="hint" data-role="hint">You can edit any field before confirming.</span><button class="btn primary confirm" data-action="confirm">✓ Confirm this card</button></div></div></div>`;
-    cardsEl.append(article);
-    article.querySelectorAll('input').forEach(input => input.addEventListener('input', () => { card.data[input.name]=input.value; card.confirmed=false; card.status='review'; updateCardUI(card); updateSummary(); }));
-    article.querySelector('[data-action="confirm"]').addEventListener('click', () => confirmCard(card));
-    article.querySelector('[data-action="crop"]').addEventListener('click', () => openCrop(card));
-    article.querySelector('[data-action="remove"]').addEventListener('click', () => removeCard(card));
-    updateCardUI(card);
-  }
-
-  async function runOcr(card) {
-    const article = document.querySelector(`#card-${CSS.escape(card.id)}`); if (!article) return;
-    card.status='reading'; card.error=''; card.ocrDone=false; card.confirmed=false; updateCardUI(card);
-    const ocrLine=article.querySelector('[data-role="ocrline"]'); ocrLine.innerHTML='<span class="spinner"></span> Reading text from this card…';
-    try {
-      const result = await enqueueOcr(async () => {
-        // Keep image preparation inside the queue too. Preparing several large
-        // canvases at once can exhaust memory on phones and reload the tab.
-        const image = await prepareImageForOcr(card.ocrSource || card.file);
-        const engine = await getOcrEngine(() => { ocrLine.innerHTML='<span class="spinner"></span> Loading PaddleOCR and its browser models…'; });
-        ocrLine.innerHTML='<span class="spinner"></span> Reading text with PaddleOCR…';
-        const readings=await engine.predict([image]);
-        const attempts=readings.map(reading=>({data:{text:(reading.items||[]).map(item=>item.text||'').filter(Boolean).join('\n'),confidence:averageScore(reading.items)}}));
-        attempts.sort((a,b)=>readingScore(b.data)-readingScore(a.data));
-        const result={data:{text:mergeOcrReadings(attempts),confidence:attempts[0]?.data.confidence||0}};
-        // Release the canvas backing store promptly on memory-constrained phones.
-        image.width=1; image.height=1;
-        return result;
-      });
-      const text = result.data.text || '';
-      card.ocrText = text;
-      if (!text.trim()) throw new Error('No readable text was found. Try cropping closely around the card, or enter the details manually.');
-      card.data = extractFields(text, card.data);
-      card.ocrDone=true; card.status='review';
-      syncInputs(card);
-      const emptyFields=FIELDS.filter(([key])=>!(card.data[key]||'').trim()).length;
-      ocrLine.textContent=emptyFields>=6?'Only a small amount of text was recognized. Crop tightly around the card or fill the fields manually.':'Text found — check the raw reading below and review each field.';
-    } catch(error) {
-      card.ocrText = '';
-      card.ocrDone=true; card.status='failed'; card.error=error.message || 'OCR could not read this image.';
-      ocrLine.textContent=`PaddleOCR could not read this card. ${card.error} Enter details below, then confirm.`;
-    }
-    updateCardUI(card); updateSummary();
-  }
-
-  function getOcrEngine(onStart) {
-    if (!paddleOcrPromise) {
-      onStart?.();
-      installCdnWorkerBridge();
-      paddleOcrPromise = import('https://cdn.jsdelivr.net/npm/@paddleocr/paddleocr-js@0.4.2/+esm')
-        .then(({PaddleOCR}) => PaddleOCR.create({
-          lang:'en',
-          textDetectionModelName:'PP-OCRv5_mobile_det',
-          textDetectionModelAsset:{url:'https://huggingface.co/LunarOilRig/paddleocr-onnx/resolve/main/PP-OCRv5_mobile_det_onnx_infer.tar'},
-          textRecognitionModelName:'PP-OCRv5_mobile_rec',
-          textRecognitionModelAsset:{url:'https://huggingface.co/LunarOilRig/paddleocr-onnx/resolve/main/PP-OCRv5_mobile_rec_onnx_infer.tar'},
-          worker:true,
-          ortOptions:{backend:'wasm',wasmPaths:'https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/',numThreads:1,simd:true}
-        }))
-        .catch(error => { paddleOcrPromise=null; throw new Error(`PaddleOCR could not load. Check your internet connection and retry. ${error.message||''}`); });
-    }
-    return paddleOcrPromise;
-  }
-
-  function installCdnWorkerBridge(){
-    if(workerBridgeInstalled)return;
-    const NativeWorker=window.Worker;
-    window.Worker=class CdnModuleWorker extends NativeWorker{
-      constructor(scriptURL,options){
-        const source=new URL(scriptURL,location.href);
-        if(source.origin!==location.origin){
-          const wrapper=URL.createObjectURL(new Blob([`import ${JSON.stringify(source.href)};`],{type:'text/javascript'}));
-          super(wrapper,options);
-        }else super(scriptURL,options);
-      }
-    };
-    workerBridgeInstalled=true;
-  }
-
-  function enqueueOcr(task) {
-    const result = ocrQueue.then(task, task);
-    ocrQueue = result.catch(() => {});
-    return result;
-  }
-
-  async function prepareImageForOcr(file) {
-    const bitmap = await createImageBitmap(file);
-    // Business-card photos are often small. A modest upscale helps OCR, while
-    // the 1600px cap avoids the huge multi-canvas allocations that crash phones.
-    const scale = Math.min(2, 1600 / Math.max(bitmap.width, bitmap.height));
-    const width = Math.max(1, Math.round(bitmap.width * scale));
-    const height = Math.max(1, Math.round(bitmap.height * scale));
+// Big phone photos are slow to read, so scale them down to max 1800px wide/high.
+async function shrinkImage(file) {
+  try {
+    const bmp = await createImageBitmap(file);
+    const scale = Math.min(1, 1800 / Math.max(bmp.width, bmp.height));
     const canvas = document.createElement('canvas');
-    canvas.width = width; canvas.height = height;
-    const context = canvas.getContext('2d', { willReadFrequently: true });
-    context.drawImage(bitmap, 0, 0, width, height);
-    bitmap.close();
-    return canvas;
-  }
+    canvas.width = Math.round(bmp.width * scale); canvas.height = Math.round(bmp.height * scale);
+    canvas.getContext('2d').drawImage(bmp, 0, 0, canvas.width, canvas.height);
+    return await new Promise(res => canvas.toBlob(res, 'image/png'));
+  } catch { return file; }
+}
 
-  function averageScore(items){if(!items?.length)return 0;return items.reduce((sum,item)=>sum+(Number(item.score)||0),0)/items.length*100}
-  function readingScore(data){const text=data.text||'';const words=text.match(/[A-Za-z]{2,}/g)||[];const signals=(text.match(/@|\b(?:www|com|net|org|phone|mobile|email|tel)\b|\+?\d[\d() .-]{7,}\d/gi)||[]).length;return (data.confidence||0)+Math.min(words.length,40)*2+signals*12}
+/* ============ 5. EXTRACTION: simple "best guess" rules ============ */
+function extract(text, confidence) {
+  const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 1);
+  const used = new Set();
+  const v = {}, f = {};
+  const lowConf = confidence < 60;
+  const put = (key, val, flag = 'ok') => { v[key] = val || ''; f[key] = val ? (lowConf && flag === 'ok' ? 'uncertain' : flag) : 'missing'; };
+  const mark = pred => lines.forEach((l, i) => { if (pred(l)) used.add(i); });
 
-  function mergeOcrReadings(attempts){
-    const lines=[];
-    for(const attempt of attempts){
-      const seen=new Set();
-      for(const line of attempt.data.text.split(/\r?\n/).map(value=>value.trim()).filter(Boolean)){
-        const key=line.toLowerCase().replace(/[^a-z0-9]+/g,'');
-        if(key.length<2||seen.has(key))continue;
-        seen.add(key);lines.push(line);
-      }
-    }
-    return lines.join('\n');
-  }
+  // Email
+  const em = text.match(/[\w.+-]+@[\w-]+(\.[\w-]+)+/);
+  put('email', em && em[0]);
+  if (em) mark(l => l.includes(em[0]));
 
-  function extractFields(text, existing) {
-    const lines=text.split(/\r?\n/).map(line=>line.replace(/[|•·]/g,' ').replace(/\s+/g,' ').trim()).filter(Boolean);
-    const data={...existing};
-    const repairedText=repairOcrContactText(text);
-    const repairedLines=repairedText.split(/\r?\n/).map(line=>line.replace(/[|•·]/g,' ').replace(/\s+/g,' ').trim()).filter(Boolean);
-    const email=(repairedText.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i)||[])[0]||'';
-    const website=(repairedText.match(/(?:https?:\/\/|www\.)[a-z0-9-]+(?:\.[a-z0-9-]+)+(?:\/[\w./?%&=+#-]*)?|(?<![\w@.-])[a-z0-9-]+(?:\.[a-z0-9-]+)*\.(?:com|in|net|org|co|io|biz|info|web|edu|gov|uk|us|au|ca|de|ae|app)(?:\/[\w./?%&=+#-]*)?(?![\w@.-])/i)||[])[0]||'';
-    const phoneMatches=[];
-    for(const [index,line] of repairedLines.entries()){
-      const normalized=line.replace(/^\s*\+?0n(?=\s|\d)/i,'+91 ').replace(/[OoQＤ]/g,'0').replace(/[Il|]/g,'1').replace(/[Ss]/g,'5').replace(/[Bb]/g,'8');
-      for(const match of normalized.matchAll(/(?:\+?\d[\d(). \t-]{7,}\d)/g)){
-        const value=match[0].trim().replace(/[ \t]+/g,' '),digits=value.replace(/\D/g,'');
-        if(digits.length>=10&&digits.length<=13&&!phoneMatches.some(item=>item.digits===digits))phoneMatches.push({value,digits,line:repairedLines[index],index});
-      }
-    }
-    const phones=phoneMatches.slice(0,3);
-    const candidates=lines.filter(l=>(!email||!l.includes(email))&&!(website&&l.toLowerCase().includes(website.toLowerCase()))&&!phones.some(p=>p.line===l)&&!/\b(?:www|https?)\b/i.test(l)&&!/^\s*(tel|phone|mobile|fax|email|e-mail)\s*[:.-]?\s*$/i.test(l));
-    const lineFrequency=new Map();
-    for(const line of candidates){const key=line.toLowerCase().replace(/[^a-z0-9]+/g,'');lineFrequency.set(key,(lineFrequency.get(key)||0)+1)}
-    const frequency=line=>(lineFrequency.get(line.toLowerCase().replace(/[^a-z0-9]+/g,''))||1);
-    const companyTerms=/\b(inc\.?|llc|ltd\.?|limited|corp\.?|corporation|company|co\.?|group|technologies|technology|solutions|services|industries|pvt\.?|private|gmbh|studio|partners)\b/i;
-    let title='';
-    const titleRegex=/\b(manager|director|president|chief|ceo|cto|cfo|coo|founder|owner|engineer|developer|designer|consultant|sales|marketing|executive|officer|lead|analyst|architect|specialist|head|professor|doctor|dr\.?|vice president|vp)\b/i;
-    const titleLine=candidates.filter(l=>titleRegex.test(normalizeJobTitle(l))).sort((a,b)=>frequency(b)-frequency(a))[0];
-    if(titleLine) title=normalizeJobTitle(titleLine);
-    const nameOptions=candidates.filter(l=>l!==titleLine&&l.length<50&&!/[0-9@]/.test(l)&&l.split(/\s+/).length>=2&&l.split(/\s+/).length<=4&&!companyTerms.test(l)&&!titleRegex.test(normalizeJobTitle(l))&&!/\b(street|road|avenue|floor|suite|building|city|state|www|email|phone|mobile|website)\b/i.test(l));
-    const nameCandidate=nameOptions.sort((a,b)=>nameLineScore(b,frequency(b))-nameLineScore(a,frequency(a)))[0];
-    if(nameCandidate) data.name=nameCandidate;
-    const companyIndex=candidates.findIndex(l=>companyTerms.test(l));
-    let company=companyIndex>=0?candidates[companyIndex]:'';
-    if(company&&companyTerms.test(company)&&company.split(/\s+/).length===1){const index=lines.indexOf(company),brand=lines.slice(Math.max(0,index-3),index).reverse().find(line=>line!==nameCandidate&&line!==titleLine&&line.length<45&&!/[0-9@]/.test(line)&&!companyTerms.test(line)&&!titleRegex.test(normalizeJobTitle(line)));if(brand)company=`${brand} ${company}`}
-    if(!company){const groups=new Map();for(const line of candidates){if(line===titleLine||line===nameCandidate||line.length>40||/[0-9@]/.test(line)||titleRegex.test(normalizeJobTitle(line)))continue;const words=line.split(/\s+/);if(words.length>3)continue;const key=line.toLowerCase().replace(/[^a-z0-9]+/g,'');if(!key)continue;const item=groups.get(key)||{line,count:0,style:0};item.count+=1;if(/^[A-Z0-9 &.-]+$/.test(line)||/[A-Z][a-z]+[A-Z]/.test(line))item.style=2;if(words.length===1)item.style+=1;groups.set(key,item)}const brand=[...groups.values()].sort((a,b)=>(b.count*2+b.style)-(a.count*2+a.style))[0];if(brand)company=brand.line}
-    if(company&&nameCandidate&&company.toLowerCase().replace(/[^a-z0-9]+/g,'')===nameCandidate.toLowerCase().replace(/[^a-z0-9]+/g,''))company='';
-    if(company) data.company=company;
-    if(title) data.title=title;
-    if(email) data.email=email;
-    if(website) data.website=website.replace(/^https?:\/\//i,'');
-    if(phones.length){
-      const personal=phones.find(phone=>/\b(mobile|cell|personal|direct)\b/i.test(phone.line));
-      const companyPhone=phones.find(phone=>/\b(office|company|work|telephone|tel|fax)\b/i.test(phone.line));
-      const first=phones[0],second=phones[1];
-      if(personal)data.personalPhone=personal.value;
-      if(companyPhone)data.companyPhone=companyPhone.value;
-      if(!personal&&!companyPhone){
-        const indianMobile=phones.find(phone=>/^91[6-9]\d{9}$/.test(phone.digits));
-        const indianLandline=phones.find(phone=>/^91[1-5]\d{9,10}$/.test(phone.digits));
-        if(indianMobile)data.personalPhone=indianMobile.value;
-        if(indianLandline)data.companyPhone=indianLandline.value;
-        if(!indianMobile&&!indianLandline){data.companyPhone=first.value;if(second)data.personalPhone=second.value}
-      }
-      else for(const phone of phones){if(phone!==personal&&phone!==companyPhone){if(!data.personalPhone)data.personalPhone=phone.value;else if(!data.companyPhone)data.companyPhone=phone.value}}
-    }
-    const addrLines=lines.filter(l=>/\b(street|st\.?|road|rd\.?|avenue|ave\.?|lane|ln\.?|suite|ste\.?|floor|blvd|boulevard|drive|city|postal|zip|india|usa|united states|way|park|plaza|sector|district|pin)\b|\b\d{5,6}\b|\b(?:flat|unit|no\.?|#)\s*\d|\b[A-Za-z]{1,5}[\/#]\d{1,3}\b/i.test(l)&&!phones.some(p=>p.line===l)&&!(email&&l.toLowerCase().includes(email.toLowerCase()))&&!(website&&l.toLowerCase().includes(website.toLowerCase()))&&(l.match(/\d/g)||[]).length<8);
-    if(addrLines.length) data.address=[...new Set(addrLines)].join(', ');
-    return data;
-  }
+  // Website (look at text with the email removed so the email domain isn't mistaken for a website)
+  const noEmail = text.replace(/[\w.+-]+@[\w-]+(\.[\w-]+)+/g, ' ');
+  const web = noEmail.match(/(?:https?:\/\/)?www\.[^\s,;]+|\b[a-z0-9-]+\.(?:com|in|net|org|io|co|biz|info|tech)(?:\.[a-z]{2})?\b[^\s,;]*/i);
+  put('website', web && web[0]);
+  if (web) mark(l => l.includes(web[0]));
 
-  function repairOcrContactText(text){
-    return text.replace(/[\w.+%'-]+@[\w.-]+\.[\w]{2,}/g,value=>value.replace(/\bwb\b/ig,'web').replace(/\bc0m\b/ig,'com').replace(/\bco[mn]\b/ig,'com'))
-      .replace(/\b(?:w[uor]{1,2}w|wvvw|wwv)\b/ig,'www').replace(/\bwob\b/ig,'web').replace(/\bc0m\b/ig,'com');
-  }
+  // Phones: personal vs company decided by hints like "Mob", "Cell", "Tel", "Office"
+  let personal = '', company = '', personalFlag = 'ok', companyFlag = 'ok';
+  const unhinted = [];
+  lines.forEach((line, i) => {
+    const m = line.replace(/[\w.+-]+@[\w-]+(\.[\w-]+)+/g, '').match(/\+?\d[\d\s().-]{6,}\d/);
+    if (!m) return;
+    const digits = m[0].replace(/\D/g, '');
+    if (digits.length < 8 || digits.length > 15) return;
+    used.add(i);
+    if (/fax/i.test(line)) return;
+    const num = m[0].trim();
+    if (/mob|cell|personal|\bm\s*[:.-]|whatsapp/i.test(line)) { if (!personal) personal = num; }
+    else if (/tel|office|landline|\bph\b|\bt\s*[:.-]|phone/i.test(line)) { if (!company) company = num; }
+    else unhinted.push(num);
+  });
+  unhinted.forEach(n => {
+    if (!company) { company = n; companyFlag = 'uncertain'; }
+    else if (!personal) { personal = n; personalFlag = 'uncertain'; }
+  });
+  put('personalPhone', personal, personalFlag);
+  put('companyPhone', company, companyFlag);
 
-  function normalizeJobTitle(value){
-    return value.replace(/\bbales\b/ig,'Sales').replace(/\bhanager\b/ig,'Manager').replace(/\bmanoger\b/ig,'Manager').replace(/\bexecutlve\b/ig,'Executive');
-  }
+  // Job title
+  const TITLE = /(manager|director|ceo|cto|cfo|coo|founder|president|engineer|developer|consultant|executive|officer|head|lead|partner|analyst|designer|architect|sales|marketing|proprietor|owner|\bvp\b|vice|chairman|specialist|associate)/i;
+  const ti = lines.findIndex((l, i) => !used.has(i) && TITLE.test(l) && l.length < 60);
+  put('title', ti >= 0 ? lines[ti] : '');
+  if (ti >= 0) used.add(ti);
 
-  function nameLineScore(line,count){
-    const words=line.split(/\s+/);let score=count*3+(words.length===2?8:words.length===3?4:0);
-    if(words.every(word=>/^[A-Z][a-z'-]+$/.test(word)))score+=5;
-    const compact=line.toLowerCase().replace(/[^a-z0-9]/g,'');
-    if(/[&@0-9]/.test(line)||/^(?:fintrack|king|corporation|company|corp|ltd|inc)$/.test(compact))score-=8;
-    return score;
-  }
+  // Company
+  const COMP = /(pvt|ltd|llp|inc\b|llc|corp|company|\bco\b|technolog|solution|systems|industries|enterprise|group|services|consult|labs|global|associates|studio|bank)/i;
+  const ci = lines.findIndex((l, i) => !used.has(i) && COMP.test(l));
+  put('company', ci >= 0 ? lines[ci] : '', 'uncertain');
+  if (ci >= 0) used.add(ci);
 
-  function syncInputs(card) { const article=document.querySelector(`#card-${CSS.escape(card.id)}`); if(!article)return; for(const [key] of FIELDS){const input=article.querySelector(`[name="${key}"]`);input.value=card.data[key]||'';} }
-  function updateCardUI(card) {
-    const article=document.querySelector(`#card-${CSS.escape(card.id)}`); if(!article)return;
-    const badge=article.querySelector('[data-role="badge"]'), hint=article.querySelector('[data-role="hint"]'), button=article.querySelector('[data-action="confirm"]');
-    badge.className='badge';
-    if(card.status==='reading'){badge.classList.add('working');badge.textContent='Reading…'}
-    else if(card.confirmed){badge.classList.add('done');badge.textContent='Confirmed'}
-    else {badge.classList.add('pending');badge.textContent=card.status==='failed'?'Manual entry':'Needs review'}
-    const missing=FIELDS.filter(([key])=>!(card.data[key]||'').trim());
-    const rawtext=article.querySelector('[data-role="rawtext"]');
-    if(card.ocrText){rawtext.classList.remove('hidden');article.querySelector('[data-role="raw"]').textContent=card.ocrText.trim()||'(No text recognized)'}
-    article.querySelectorAll('.field').forEach(el=>el.classList.toggle('missing',!(card.data[el.dataset.field]||'').trim()));
-    if(card.status==='reading'){hint.textContent='OCR is working. You can edit fields now.';hint.className='hint'}
-    else if(card.confirmed){hint.textContent=missing.length?`${missing.length} field${missing.length===1?'':'s'} left blank; saved as reviewed.`:'All set — this card is ready for Excel.';hint.className='hint'}
-    else if(card.status==='failed'){hint.textContent='OCR was unavailable. Fill in what you can; blank fields are okay.';hint.className='hint warn'}
-    else {hint.textContent=missing.length?`${missing.length} field${missing.length===1?'':'s'} missing or uncertain — check in amber.`:'Check the details, then confirm.';hint.className=missing.length?'hint warn':'hint'}
-    button.textContent=card.confirmed?'✓ Confirmed':'✓ Confirm this card';
-    button.classList.toggle('primary',!card.confirmed);
+  // Address: lines that look like street/city/pin code
+  const ADDR = /(road|\brd\b|street|\bst\b|floor|nagar|plot|sector|building|tower|park|lane|avenue|near|opp|\b\d{6}\b|\bpin\b|mumbai|delhi|bangalore|bengaluru|pune|chennai|hyderabad|kolkata|india)/i;
+  const addrLines = lines.filter((l, i) => { const ok = !used.has(i) && (ADDR.test(l) || (/,/.test(l) && /\d/.test(l))); if (ok) used.add(i); return ok; });
+  put('address', addrLines.join(', '), 'uncertain');
+
+  // Name: first remaining short line made of 2-4 words with only letters
+  const ni = lines.findIndex((l, i) => !used.has(i) && /^[A-Za-z.'\- ]+$/.test(l) && l.split(/\s+/).length >= 2 && l.split(/\s+/).length <= 4);
+  put('name', ni >= 0 ? lines[ni] : '', ni >= 0 && ni <= 2 ? 'ok' : 'uncertain');
+
+  return { values: v, flags: f };
+}
+
+/* ============ 6. SCREEN: draw one card ============ */
+function esc(s) { return String(s).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
+const BADGE = { ok: '', uncertain: '⚠ Please check', missing: '✖ Missing' };
+
+function statusHTML(c) {
+  if (c.status === 'queued')  return '<div class="status">⏳ Waiting in line…</div>';
+  if (c.status === 'reading') return `<div class="status">🔍 Reading card… ${c.progress}%</div>`;
+  if (c.status === 'failed')  return `<div class="status failed">⚠️ Could not read this card automatically (${esc(c.error)}). Please type the details below. Your other cards are not affected.</div>`;
+  return '<div class="status done">✅ Reading finished. Check yellow and red fields, then confirm.</div>';
+}
+function setStatusText(c) { const s = c.el.querySelector('.status'); if (s) s.innerHTML = `🔍 Reading card… ${c.progress}%`; }
+
+function renderCard(c) {
+  const el = c.el;
+  el.className = 'card' + (c.confirmed ? ' confirmed' : '');
+  const busy = c.status === 'queued' || c.status === 'reading';
+  const fieldsHTML = FIELDS.map(([k, label]) => {
+    const input = k === 'address'
+      ? `<textarea rows="2" data-k="${k}" ${c.confirmed || busy ? 'disabled' : ''}>${esc(c.values[k])}</textarea>`
+      : `<input type="text" data-k="${k}" value="${esc(c.values[k])}" ${c.confirmed || busy ? 'disabled' : ''}>`;
+    return `<div class="field ${busy ? '' : c.flags[k]}" data-f="${k}">
+      <label>${label}<span class="badge">${busy ? '' : BADGE[c.flags[k]]}</span></label>${input}</div>`;
+  }).join('');
+  el.innerHTML = `
+    <img src="${c.url}" alt="Business card ${c.id}">
+    ${statusHTML(c)}
+    ${fieldsHTML}
+    ${c.raw ? `<details><summary>Show raw OCR text</summary><pre>${esc(c.raw)}</pre></details>` : ''}
+    <div class="actions">
+      <button class="btn ${c.confirmed ? 'alt' : 'ok'} small" data-act="confirm" ${busy ? 'disabled' : ''}>${c.confirmed ? '✏️ Edit again' : '✔ Confirm card'}</button>
+      <button class="btn alt small" data-act="remove">🗑 Remove</button>
+    </div>`;
+
+  // typing in a field: save value and clear the highlight if something was entered
+  el.querySelectorAll('[data-k]').forEach(inp => inp.addEventListener('input', () => {
+    const k = inp.dataset.k;
+    c.values[k] = inp.value;
+    c.flags[k] = inp.value.trim() ? 'ok' : 'missing';
+    const box = el.querySelector(`[data-f="${k}"]`);
+    box.className = 'field ' + c.flags[k];
+    box.querySelector('.badge').textContent = BADGE[c.flags[k]];
+  }));
+  el.querySelector('[data-act="confirm"]').onclick = () => toggleConfirm(c);
+  el.querySelector('[data-act="remove"]').onclick = () => removeCard(c);
+}
+
+function toggleConfirm(c) {
+  if (!c.confirmed) {
+    const missing = FIELDS.filter(([k]) => !c.values[k].trim()).map(f => f[1]);
+    if (missing.length && !confirm('These fields are empty: ' + missing.join(', ') + '.\nConfirm anyway?')) return;
   }
-  function confirmCard(card){ if(card.status==='reading'){toast('Wait for this card to finish reading, or enter details after it finishes.',true);return;} card.confirmed=true;card.status='confirmed';updateCardUI(card);updateSummary(); }
-  function removeCard(card){ const i=cards.indexOf(card);if(i>=0)cards.splice(i,1);URL.revokeObjectURL(card.url);document.querySelector(`#card-${CSS.escape(card.id)}`)?.remove();if(!cards.length)cardsEl.innerHTML='<div class="empty" id="empty"><div class="symbol">▤</div><strong>No cards added yet</strong>Pick one or more card photos to get started.</div>';updateSummary(); }
-  function openCrop(card){cropTarget=card;cropSelection=null;document.querySelector('#applyCrop').disabled=true;document.querySelector('#cropBox').classList.add('hidden');const image=document.querySelector('#cropImage');image.src=card.url;document.querySelector('#cropDialog').showModal()}
-  function cropPoint(event){const image=document.querySelector('#cropImage');const rect=image.getBoundingClientRect();return{x:Math.max(0,Math.min(rect.width,event.clientX-rect.left)),y:Math.max(0,Math.min(rect.height,event.clientY-rect.top)),rect}}
-  function startCrop(event){if(!cropTarget)return;event.preventDefault();event.currentTarget.setPointerCapture(event.pointerId);const p=cropPoint(event);cropStart={x:p.x,y:p.y};cropSelection=null;drawCropBox(p.x,p.y,0,0)}
-  function moveCrop(event){if(!cropStart)return;const p=cropPoint(event);const left=Math.min(cropStart.x,p.x),top=Math.min(cropStart.y,p.y),width=Math.abs(p.x-cropStart.x),height=Math.abs(p.y-cropStart.y);cropSelection={left,top,width,height,displayWidth:p.rect.width,displayHeight:p.rect.height};drawCropBox(left,top,width,height)}
-  function endCrop(){if(!cropStart)return;cropStart=null;document.querySelector('#applyCrop').disabled=!(cropSelection&&cropSelection.width>24&&cropSelection.height>18)}
-  function drawCropBox(left,top,width,height){const box=document.querySelector('#cropBox');Object.assign(box.style,{left:`${left}px`,top:`${top}px`,width:`${width}px`,height:`${height}px`});box.classList.remove('hidden')}
-  async function applyCrop(){if(!cropTarget||!cropSelection)return;const card=cropTarget;const bitmap=await createImageBitmap(card.file);const sx=bitmap.width/cropSelection.displayWidth,sy=bitmap.height/cropSelection.displayHeight;const canvas=document.createElement('canvas');canvas.width=Math.round(cropSelection.width*sx);canvas.height=Math.round(cropSelection.height*sy);canvas.getContext('2d').drawImage(bitmap,cropSelection.left*sx,cropSelection.top*sy,cropSelection.width*sx,cropSelection.height*sy,0,0,canvas.width,canvas.height);bitmap.close();const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/jpeg',.94));if(!blob){toast('Could not crop this image. Please try again.',true);return}card.ocrSource=blob;card.data=Object.fromEntries(FIELDS.map(([key])=>[key,'']));card.confirmed=false;syncInputs(card);document.querySelector('#cropDialog').close();cropTarget=null;runOcr(card);toast('Cropped card. Trying OCR again…')}
-  function updateSummary(){const confirmed=cards.filter(c=>c.confirmed).length;document.querySelector('#cardCount').textContent=cards.length;document.querySelector('#exportBtn').disabled=confirmed===0;document.querySelector('#retryAllBtn').disabled=!cards.some(c=>c.status==='failed');document.querySelector('#exportStatus').textContent=confirmed?`${confirmed} confirmed contact${confirmed===1?'':'s'} ready to export.`:'Confirm cards to add them to your spreadsheet.';const active=cards.length?2:1;for(let i=1;i<=4;i++)document.querySelector(`#step${i}`).classList.toggle('active',i===active||i===3&&confirmed>0||i===4&&confirmed>0);}
-  function exportExcel(){const confirmed=cards.filter(c=>c.confirmed);if(!confirmed.length)return;if(!window.XLSX){toast('Excel export library did not load. Check your internet and retry.',true);return;}const rows=confirmed.map(c=>Object.fromEntries(FIELDS.map(([key,label])=>[label,(c.data[key]||'').trim()])));const sheet=XLSX.utils.json_to_sheet(rows,{header:FIELDS.map(([,label])=>label)});sheet['!cols']=[{wch:24},{wch:28},{wch:24},{wch:38},{wch:30},{wch:20},{wch:20},{wch:28}];const book=XLSX.utils.book_new();XLSX.utils.book_append_sheet(book,sheet,'Business Cards');XLSX.writeFile(book,`business-cards-${new Date().toISOString().slice(0,10)}.xlsx`);toast(`Downloaded ${confirmed.length} contact${confirmed.length===1?'':'s'} to Excel.`);}
-  function toast(message,error=false){const el=document.querySelector('#toast');el.textContent=message;el.classList.toggle('error',error);el.classList.remove('hidden');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.add('hidden'),3800)}
-  function escapeHTML(value){return String(value).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]))}
-  function formatBytes(bytes){if(bytes<1024*1024)return `${Math.max(1,Math.round(bytes/1024))} KB`;return `${(bytes/1024/1024).toFixed(1)} MB`}
-})();
+  c.confirmed = !c.confirmed;
+  renderCard(c); updateSummary();
+}
+function removeCard(c) {
+  if (!confirm('Remove this card?')) return;
+  cards.splice(cards.indexOf(c), 1);
+  c.el.remove(); URL.revokeObjectURL(c.url); updateSummary();
+}
+
+function updateSummary() {
+  const done = cards.filter(c => c.confirmed).length;
+  document.getElementById('summary').textContent = cards.length
+    ? `${cards.length} card(s) added · ${done} confirmed` : 'No cards yet. Add some photos to begin.';
+  const btn = document.getElementById('exportBtn');
+  btn.disabled = done === 0;
+  btn.textContent = `⬇️ Download Excel (${done} confirmed)`;
+}
+
+/* ============ 7. EXCEL EXPORT (SheetJS): one row per confirmed card ============ */
+document.getElementById('exportBtn').addEventListener('click', () => {
+  if (typeof XLSX === 'undefined') { alert('Excel library did not load. Check your internet connection.'); return; }
+  const rows = cards.filter(c => c.confirmed).map(c => {
+    const row = {};
+    FIELDS.forEach(([k, label]) => row[label] = c.values[k].trim());
+    return row;
+  });
+  const sheet = XLSX.utils.json_to_sheet(rows, { header: FIELDS.map(f => f[1]) });
+  sheet['!cols'] = FIELDS.map(() => ({ wch: 24 }));
+  const book = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(book, sheet, 'Business Cards');
+  XLSX.writeFile(book, 'business_cards.xlsx');
+});
+
+updateSummary();
 </script>
 </body>
 </html>
